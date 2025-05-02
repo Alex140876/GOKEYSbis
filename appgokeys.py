@@ -20,7 +20,12 @@ st.title("Assistant KORG Go Keys 3 🎶")
 question = st.text_input("Posez votre question sur le clavier :")
 
 if question:
-    prompt = f"""
+from openai import OpenAI
+
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+# Générer le prompt à partir de la question
+prompt = f"""
 Tu es un expert du clavier KORG Go Keys 3.
 Réponds à la question suivante en utilisant uniquement les informations ci-dessous :
 
@@ -30,6 +35,18 @@ Manuel :
 Question :
 {question}
 """
+
+# Appel API
+response = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "user", "content": prompt}
+    ]
+)
+
+# Affichage
+st.success(response.choices[0].message.content.strip())
+
     with st.spinner("Recherche de la réponse..."):
        from openai import OpenAI
 
