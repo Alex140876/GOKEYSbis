@@ -6,7 +6,7 @@ from PyPDF2 import PdfReader
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # 📘 Charger le manuel PDF
-@st.cache_data
+# @st.cache_data  # Désactivé pour éviter les erreurs avec les fichiers PDF
 def charger_manuel(path):
     reader = PdfReader(path)
     texte = ""
