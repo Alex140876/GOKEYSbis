@@ -31,8 +31,7 @@ Question :
 {question}
 """
     with st.spinner("Recherche de la réponse..."):
-        response = openai.ChatCompletion.create(
-from openai import OpenAI
+       from openai import OpenAI
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
