@@ -1,40 +1,37 @@
 import streamlit as st
 import openai
-from PyPDF2 import PdfReader
 
-# 🔑 Clé OpenAI (à sécuriser dans Streamlit Cloud)
+# 🔑 Clé API OpenAI (ajoute-la dans Settings > Secrets)
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# 📘 Charger le manuel PDF
-# @st.cache_data  # Désactivé pour éviter les erreurs avec les fichiers PDF
-def charger_manuel(path):
-    reader = PdfReader(path)
-    texte = ""
-    for page in reader.pages:
-        texte += page.extract_text() + "\n"
-    return texte
+# ✅ Texte brut extrait du manuel utilisateur
+manuel = """
+Appuyez sur le bouton [REC] pour démarrer l'enregistrement.
+Utilisez les boutons de catégorie pour changer de sons.
+Le mode LOOP vous permet de superposer des parties de batterie, basse, accord et solo.
+Branchez le clavier à l'ordinateur via USB (Type B) pour le connecter en MIDI.
+... (tu peux compléter ce texte avec plus d’extraits du PDF)
+"""
 
-# Charger le manuel
-manuel = charger_manuel("GOKEYS_Reference_fra01_W.pdf")
-
-# Interface utilisateur
-st.title("🎹 Assistant KORG Go Keys 3")
-question = st.text_input("Posez votre question :")
+# 🎹 Interface utilisateur
+st.title("Assistant KORG Go Keys 3 🎶")
+question = st.text_input("Posez votre question sur le clavier :")
 
 if question:
-    prompt = f'''
-Tu es un expert du clavier Roland KORG Go Keys 3.
-Réponds à la question de manière claire et simple, en utilisant uniquement les informations de ce manuel.
+    prompt = f"""
+Tu es un expert du clavier KORG Go Keys 3.
+Réponds à la question suivante en utilisant uniquement les informations ci-dessous :
 
 Manuel :
-{manuel[:20000]}
+{manuel}
 
 Question :
 {question}
-'''
+"""
     with st.spinner("Recherche de la réponse..."):
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
         st.success(response.choices[0].message.content.strip())
+
